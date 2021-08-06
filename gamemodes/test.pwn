@@ -78,6 +78,7 @@ main()
     You can also test player using PTEST__ or PTest:
     ----------------------------------------------------
 */
+
 TEST__ BitFlagsTest_1()
 {
     new 
