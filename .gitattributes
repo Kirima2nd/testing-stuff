@@ -1,0 +1,6 @@
+*.pwn linguist-language=Pawn
+*.inc linguist-language=Pawn
+
+# Making pwn and inc files converted into lf instead of clrf
+*.pwn text eol=lf
+*.inc text eol=lf
