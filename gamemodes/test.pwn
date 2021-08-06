@@ -11,10 +11,10 @@
 // NEVER remove this, it's good for making your warning becomes error!
 #pragma option -E
 
-// Include core includes
+// Include core
 #include <a_samp>
 
-// For testing includes, i use y_testing because it's easier.
+// For testing, i use y_testing because it's easier.
 #define RUN_TESTS
 #include <YSI_Core\y_testing>
 
@@ -78,6 +78,14 @@ main()
     You can also test player using PTEST__ or PTest:
     ----------------------------------------------------
 */
+
+#if 0
+// Your testing code should be like this
+TEST__ TestName()
+{
+    // Code Below
+}
+#endif
 
 TEST__ BitFlagsTest_1()
 {
