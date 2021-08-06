@@ -85,8 +85,16 @@ TEST__ TestName()
 {
     // Code Below
 }
+
+// Or this
+PTEST__ PlayerTestName(playerid)
+{
+    // Code below
+    ASK("Ask about the test result like, \"Is it working?\"");
+}
 #endif
 
+// This is my test code
 TEST__ BitFlagsTest_1()
 {
     new 
