@@ -13,10 +13,13 @@
 
 // Include core
 #include <a_samp>
+#include <a_mysql>
 
 // For testing, i use y_testing because it's easier.
 #define RUN_TESTS
 #include <YSI_Core\y_testing>
+
+#include <YSI_Extra\y_inline_mysql>
 
 enum e_SOMETHING(<<=1)
 {
@@ -63,6 +66,8 @@ EmulateToggle(&bool:toggle)
     }
 }
 
+Func(min, max = cellmax) {static i; return ((i!=max)?(i==0)?(i=min,printf("Increment: %i",i),Func(min,max)):((i!=max)?(i++,printf("Increment: %i",i),Func(min,max)):(max,printf("Already MAX!"))):(printf("Already MAX!")));}
+
 // Main(), required or else will give error.
 main()
 {
@@ -92,6 +97,7 @@ PTEST__ PlayerTestName(playerid)
     // Code below
     ASK("Ask about the test result like, \"Is it working?\"");
 }
+
 #endif
 
 // This is my test code
@@ -114,4 +120,94 @@ TEST__ BitFlagsTest_2()
 
     #define Bit_Count(%0) (floatround(floatlog(float(%0), 2.0)))
     TEST_REPORT("Result #2: %d | %d | %d", e_SOMETHING, Bit_Count(_:e_SOMETHING), _:e_SOMETHING / 4);
+}
+
+TEST__ ShitFunc()
+{
+    Func(1, 10);
+}
+
+new MySQL:gHandle;
+
+ReturnQuery()
+{
+    inline _OnSomething()
+    {
+        new ret = cache_num_rows();
+        @return ret;
+    }
+    MySQL_TQueryInline(gHandle, using inline _OnSomething, "SELECT * FROM accounts");
+    return 4;
+}
+
+ReturnQuery_2()
+{
+    inline _OnSomething_2()
+    {
+        new ret = cache_num_rows();
+        return ret;
+    }
+    MySQL_TQueryInline(gHandle, using inline _OnSomething_2, "SELECT * FROM accounts");
+    return 4;
+}
+
+
+ReturnQuery_3()
+{
+    inline const _OnSomething_3()
+    {
+        new ret = cache_num_rows();
+        @return ret;
+    }
+    MySQL_TQueryInline(gHandle, using inline _OnSomething_3, "SELECT * FROM accounts");
+    return 4;
+}
+
+ReturnQuery_4()
+{
+    new ret;
+    inline _OnSomething_4()
+    {
+        cache_get_row_count(ret);
+    }
+    MySQL_TQueryInline(gHandle, using inline _OnSomething_4, "SELECT * FROM accounts");
+    return ret;
+}
+
+
+public OnGameModeInit()
+{
+    gHandle = mysql_connect("localhost", "root", "", "wjcnr_rebuild");
+}
+
+TEST__ TestRetriveThing()
+{
+    ASSERT_NE(gHandle, MYSQL_INVALID_HANDLE);
+    ASSERT_ZE(mysql_errno(gHandle));
+
+    TEST_REPORT("Result Query #1: %d | %d", ReturnQuery(), ReturnQuery());
+}
+
+TEST__ TestRetriveThing_2()
+{
+    ASSERT_NE(gHandle, MYSQL_INVALID_HANDLE);
+    ASSERT_ZE(mysql_errno(gHandle));
+
+    TEST_REPORT("Result Query #2: %d | %d", ReturnQuery_2(), ReturnQuery_2());
+}
+
+TEST__ TestRetriveThing_3()
+{
+    ASSERT_NE(gHandle, MYSQL_INVALID_HANDLE);
+    ASSERT_ZE(mysql_errno(gHandle));
+
+    TEST_REPORT("Result Query #3: %d | %d", ReturnQuery_3(), ReturnQuery_3());
+}
+
+TEST__ TestRetriveThing_4()
+{
+    ASSERT_NE(gHandle, MYSQL_INVALID_HANDLE);
+    ASSERT_ZE(mysql_errno(gHandle));
+
+    TEST_REPORT("Result Query #4: %d | %d", ReturnQuery_4(), ReturnQuery_4());
 }
