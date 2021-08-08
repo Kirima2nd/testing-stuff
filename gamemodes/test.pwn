@@ -7,20 +7,33 @@
 *    You can use it though and edit it by yourself
 */
 
-
 // NEVER remove this, it's good for making your warning becomes error!
 #pragma option -E
 
-// Include core
+/*  
+    ----------------------------------------------------
+    Initializing Resources
+    ----------------------------------------------------
+    If your code requires some specific library
+    (let's say ssscanf) then you'll need to put the
+    include after `#inclue <YSI_Core\y_testing>`.
+    ----------------------------------------------------
+*/
 #include <a_samp>
-#include <a_mysql>
 
-// For testing, i use y_testing because it's easier.
+// Testing include, NEVER REMOVE THIS!!!
 #define RUN_TESTS
 #include <YSI_Core\y_testing>
 
-#include <YSI_Extra\y_inline_mysql>
-
+/*  
+    ----------------------------------------------------
+    Preparing your code
+    ----------------------------------------------------
+    Put your stuff above TEST__ or PTEST__ because
+    when you put your code below it can cause an error
+    like `forcing reparse` or `undefined symbol`
+    ----------------------------------------------------
+*/
 enum e_SOMETHING(<<=1)
 {
     E_ONE = 1,
@@ -66,9 +79,15 @@ EmulateToggle(&bool:toggle)
     }
 }
 
-Func(min, max = cellmax) {static i; return ((i!=max)?(i==0)?(i=min,printf("Increment: %i",i),Func(min,max)):((i!=max)?(i++,printf("Increment: %i",i),Func(min,max)):(max,printf("Already MAX!"))):(printf("Already MAX!")));}
-
-// Main(), required or else will give error.
+/*  
+    ----------------------------------------------------
+    Entry Index
+    ----------------------------------------------------
+    This is entry index or as we call it `main code`
+    if you're not declaring this, there is a chance you
+    will get error in runtime.
+    ----------------------------------------------------
+*/
 main()
 {
     printf("Running Test...");
@@ -76,31 +95,13 @@ main()
 
 /*  
     ----------------------------------------------------
-    Testing Your Code Below
+    Tutorial Testing
     ----------------------------------------------------
     This is how you supposed to test the code.
     It's either using TEST__ or Test:
     You can also test player using PTEST__ or PTest:
     ----------------------------------------------------
 */
-
-#if 0
-// Your testing code should be like this
-TEST__ TestName()
-{
-    // Code Below
-}
-
-// Or this
-PTEST__ PlayerTestName(playerid)
-{
-    // Code below
-    ASK("Ask about the test result like, \"Is it working?\"");
-}
-
-#endif
-
-// This is my test code
 TEST__ BitFlagsTest_1()
 {
     new 
@@ -122,92 +123,39 @@ TEST__ BitFlagsTest_2()
     TEST_REPORT("Result #2: %d | %d | %d", e_SOMETHING, Bit_Count(_:e_SOMETHING), _:e_SOMETHING / 4);
 }
 
-TEST__ ShitFunc()
+/*  
+    ----------------------------------------------------
+    Preparing a test code
+    ----------------------------------------------------
+    You can use TEST_INIT__ or PTEST_INIT__ to prepare
+    the values and using TEST_CLOSE__ or PTEST_CLOSE__
+    to cleanup the values.
+
+    Here is the example of how you should doing the
+    test using TEST_INIT__ and TEST_CLOSE__
+    ----------------------------------------------------
+*/
+new 
+    gPlayerId,
+    e_SOMETHING:gTestPermissions[MAX_PLAYERS];
+
+TEST_INIT__ CheckPermissions()
 {
-    Func(1, 10);
+    TEST_REPORT("Preparing the values...");
+
+    gPlayerId = 4;
+    gTestPermissions[gPlayerId] = E_ONE | E_THREE | E_FIVE;
 }
 
-new MySQL:gHandle;
-
-ReturnQuery()
+TEST__ CheckPermissions()
 {
-    inline _OnSomething()
-    {
-        new ret = cache_num_rows();
-        @return ret;
-    }
-    MySQL_TQueryInline(gHandle, using inline _OnSomething, "SELECT * FROM accounts");
-    return 4;
+    ASSERT_TRUE(bool:_:(gTestPermissions[gPlayerId] & (E_ONE | E_FIVE)));
+    TEST_REPORT("gTestPermissions[%d] = %0b", gPlayerId, _:gTestPermissions[gPlayerId]);
 }
 
-ReturnQuery_2()
+TEST_CLOSE__ CheckPermissions()
 {
-    inline _OnSomething_2()
-    {
-        new ret = cache_num_rows();
-        return ret;
-    }
-    MySQL_TQueryInline(gHandle, using inline _OnSomething_2, "SELECT * FROM accounts");
-    return 4;
-}
-
-
-ReturnQuery_3()
-{
-    inline const _OnSomething_3()
-    {
-        new ret = cache_num_rows();
-        @return ret;
-    }
-    MySQL_TQueryInline(gHandle, using inline _OnSomething_3, "SELECT * FROM accounts");
-    return 4;
-}
-
-ReturnQuery_4()
-{
-    new ret;
-    inline _OnSomething_4()
-    {
-        cache_get_row_count(ret);
-    }
-    MySQL_TQueryInline(gHandle, using inline _OnSomething_4, "SELECT * FROM accounts");
-    return ret;
-}
-
-
-public OnGameModeInit()
-{
-    gHandle = mysql_connect("localhost", "root", "", "wjcnr_rebuild");
-}
-
-TEST__ TestRetriveThing()
-{
-    ASSERT_NE(gHandle, MYSQL_INVALID_HANDLE);
-    ASSERT_ZE(mysql_errno(gHandle));
-
-    TEST_REPORT("Result Query #1: %d | %d", ReturnQuery(), ReturnQuery());
-}
-
-TEST__ TestRetriveThing_2()
-{
-    ASSERT_NE(gHandle, MYSQL_INVALID_HANDLE);
-    ASSERT_ZE(mysql_errno(gHandle));
-
-    TEST_REPORT("Result Query #2: %d | %d", ReturnQuery_2(), ReturnQuery_2());
-}
-
-TEST__ TestRetriveThing_3()
-{
-    ASSERT_NE(gHandle, MYSQL_INVALID_HANDLE);
-    ASSERT_ZE(mysql_errno(gHandle));
-
-    TEST_REPORT("Result Query #3: %d | %d", ReturnQuery_3(), ReturnQuery_3());
-}
-
-TEST__ TestRetriveThing_4()
-{
-    ASSERT_NE(gHandle, MYSQL_INVALID_HANDLE);
-    ASSERT_ZE(mysql_errno(gHandle));
-
-    TEST_REPORT("Result Query #4: %d | %d", ReturnQuery_4(), ReturnQuery_4());
+    TEST_REPORT("Clearing permissions!");
+    gTestPermissions[gPlayerId] = e_SOMETHING:0;
+    gPlayerId = -1;
 }

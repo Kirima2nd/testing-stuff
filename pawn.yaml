@@ -6,13 +6,12 @@ output: gamemodes\test.amx
 dependencies:
 - sampctl/samp-stdlib
 - pawn-lang/YSI-Includes
-- pBlueG/SA-MP-MySQL:R41-4
 local: true
 runtime:
   version: 0.3.7
-  mode: server
-  rcon_password: password
-  port: 7777
-  hostname: SA-MP Server
-  maxplayers: 50
+  mode: testing
+  rcon_password: k-testing123
+  port: 7778
+  hostname: SA-MP Server Testing
+  maxplayers: 1
   language: ""
