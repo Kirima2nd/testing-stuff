@@ -19,7 +19,12 @@ Depending on whether your package is tested via in-game "demo tests" or
 y_testing unit-tests, you should indicate to readers what to expect below here.
 -->
 
-To test, simply run the project:
+First, you need to ensure the packages are installed, using:
+```bash
+sampctl package ensure
+```
+
+After that, simply run the following command:
 
 ```bash
 sampctl package run --forceBuild
